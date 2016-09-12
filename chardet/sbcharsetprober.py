@@ -43,7 +43,6 @@ SingleByteCharSetModel = namedtuple('SingleByteCharSetModel',
 
 
 class SingleByteCharSetProber(CharSetProber):
-    SAMPLE_SIZE = 64
     SB_ENOUGH_REL_THRESHOLD = 1024  #  0.25 * SAMPLE_SIZE^2
     POSITIVE_SHORTCUT_THRESHOLD = 0.95
     NEGATIVE_SHORTCUT_THRESHOLD = 0.05
@@ -106,9 +105,9 @@ class SingleByteCharSetProber(CharSetProber):
             # TODO: Follow uchardet's lead and discount confidence for frequent
             #       control characters.
             #       See https://github.com/BYVoid/uchardet/commit/55b4f23971db61
-            if order < self.SAMPLE_SIZE:
+            if order < CharacterCategory.CONTROL:
                 self._freq_char += 1
-                if self._last_order < self.SAMPLE_SIZE:
+                if self._last_order < CharacterCategory.CONTROL:
                     self._total_seqs += 1
                     if not self._reversed:
                         lm_cat = language_model[self._last_order][order]
@@ -137,7 +136,8 @@ class SingleByteCharSetProber(CharSetProber):
     def get_confidence(self):
         r = 0.01
         if self._total_seqs > 0:
-            r = ((1.0 * self._seq_counters[SequenceLikelihood.POSITIVE]) /
+            r = ((self._seq_counters[SequenceLikelihood.POSITIVE] + 0.25 *
+                  self._seq_counters[SequenceLikelihood.NEGATIVE]) /
                  self._total_seqs / self._model.typical_positive_ratio)
             r = r * self._freq_char / self._total_char
             if r >= 1.0:
