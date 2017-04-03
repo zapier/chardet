@@ -26,6 +26,7 @@
 # 02110-1301  USA
 ######################### END LICENSE BLOCK #########################
 
+import logging
 from collections import namedtuple
 
 from .charsetprober import CharSetProber
@@ -59,6 +60,7 @@ class SingleByteCharSetProber(CharSetProber):
         self._total_seqs = None
         self._total_char = None
         self._freq_char = None
+        self.logger = logging.getLogger(__name__)
         self.reset()
 
     def reset(self):
