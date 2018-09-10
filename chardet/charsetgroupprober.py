@@ -42,7 +42,7 @@ class CharSetGroupProber(CharSetProber):
         for prober in self._mProbers:
             if prober:
                 prober.reset()
-                prober.active = constants.True
+                prober.active = True
                 self._mActiveNum += 1
         self._mBestGuessProber = None
 
@@ -63,7 +63,7 @@ class CharSetGroupProber(CharSetProber):
                 self._mBestGuessProber = prober
                 return self.get_state()
             elif st == constants.eNotMe:
-                prober.active = constants.False
+                prober.active = False
                 self._mActiveNum -= 1
                 if self._mActiveNum <= 0:
                     self._mState = constants.eNotMe
