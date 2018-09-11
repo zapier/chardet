@@ -26,6 +26,8 @@
 ######################### END LICENSE BLOCK #########################
 
 from __future__ import absolute_import
+
+from .compat import wrap_ord
 from . import constants
 
 NUM_OF_CATEGORY = 6
@@ -188,7 +190,7 @@ class SJISContextAnalysis(JapaneseContextAnalysis):
             if (aStr[0] == '\202') and \
                (aStr[1] >= '\x9F') and \
                (aStr[1] <= '\xF1'):
-                return ord(aStr[1]) - 0x9F, charLen
+                return wrap_ord(aStr[1]) - 0x9F, charLen
 
         return -1, charLen
 
@@ -212,6 +214,6 @@ class EUCJPContextAnalysis(JapaneseContextAnalysis):
             if (aStr[0] == '\xA4') and \
                (aStr[1] >= '\xA1') and \
                (aStr[1] <= '\xF3'):
-                return ord(aStr[1]) - 0xA1, charLen
+                return wrap_ord(aStr[1]) - 0xA1, charLen
 
         return -1, charLen

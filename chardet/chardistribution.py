@@ -26,6 +26,8 @@
 ######################### END LICENSE BLOCK #########################
 
 from __future__ import absolute_import
+
+from .compat import wrap_ord
 from . import constants
 from .euctwfreq import EUCTWCharToFreqOrder, EUCTW_TABLE_SIZE, EUCTW_TYPICAL_DISTRIBUTION_RATIO
 from .euckrfreq import EUCKRCharToFreqOrder, EUCKR_TABLE_SIZE, EUCKR_TYPICAL_DISTRIBUTION_RATIO
@@ -102,7 +104,7 @@ class EUCTWDistributionAnalysis(CharDistributionAnalysis):
         #   second byte range: 0xa1 -- 0xfe
         # no validation needed here. State machine has done that
         if aStr[0] >= '\xC4':
-            return 94 * (ord(aStr[0]) - 0xC4) + ord(aStr[1]) - 0xA1
+            return 94 * (wrap_ord(aStr[0]) - 0xC4) + wrap_ord(aStr[1]) - 0xA1
         else:
             return -1
 
@@ -119,7 +121,7 @@ class EUCKRDistributionAnalysis(CharDistributionAnalysis):
         #   second byte range: 0xa1 -- 0xfe
         # no validation needed here. State machine has done that
         if aStr[0] >= '\xB0':
-            return 94 * (ord(aStr[0]) - 0xB0) + ord(aStr[1]) - 0xA1
+            return 94 * (wrap_ord(aStr[0]) - 0xB0) + wrap_ord(aStr[1]) - 0xA1
         else:
             return -1;
 
@@ -136,7 +138,7 @@ class GB2312DistributionAnalysis(CharDistributionAnalysis):
         #  second byte range: 0xa1 -- 0xfe
         # no validation needed here. State machine has done that
         if (aStr[0] >= '\xB0') and (aStr[1] >= '\xA1'):
-            return 94 * (ord(aStr[0]) - 0xB0) + ord(aStr[1]) - 0xA1
+            return 94 * (wrap_ord(aStr[0]) - 0xB0) + wrap_ord(aStr[1]) - 0xA1
         else:
             return -1;
 
@@ -154,9 +156,9 @@ class Big5DistributionAnalysis(CharDistributionAnalysis):
         # no validation needed here. State machine has done that
         if aStr[0] >= '\xA4':
             if aStr[1] >= '\xA1':
-                return 157 * (ord(aStr[0]) - 0xA4) + ord(aStr[1]) - 0xA1 + 63
+                return 157 * (wrap_ord(aStr[0]) - 0xA4) + wrap_ord(aStr[1]) - 0xA1 + 63
             else:
-                return 157 * (ord(aStr[0]) - 0xA4) + ord(aStr[1]) - 0x40
+                return 157 * (wrap_ord(aStr[0]) - 0xA4) + wrap_ord(aStr[1]) - 0x40
         else:
             return -1
 
@@ -173,12 +175,12 @@ class SJISDistributionAnalysis(CharDistributionAnalysis):
         #   second byte range: 0x40 -- 0x7e,  0x81 -- oxfe
         # no validation needed here. State machine has done that
         if (aStr[0] >= '\x81') and (aStr[0] <= '\x9F'):
-            order = 188 * (ord(aStr[0]) - 0x81)
+            order = 188 * (wrap_ord(aStr[0]) - 0x81)
         elif (aStr[0] >= '\xE0') and (aStr[0] <= '\xEF'):
-            order = 188 * (ord(aStr[0]) - 0xE0 + 31)
+            order = 188 * (wrap_ord(aStr[0]) - 0xE0 + 31)
         else:
             return -1;
-        order = order + ord(aStr[1]) - 0x40
+        order = order + wrap_ord(aStr[1]) - 0x40
         if aStr[1] > '\x7F':
             order =- 1
         return order
@@ -196,6 +198,6 @@ class EUCJPDistributionAnalysis(CharDistributionAnalysis):
         #   second byte range: 0xa1 -- 0xfe
         # no validation needed here. State machine has done that
         if aStr[0] >= '\xA0':
-            return 94 * (ord(aStr[0]) - 0xA1) + ord(aStr[1]) - 0xa1
+            return 94 * (wrap_ord(aStr[0]) - 0xA1) + wrap_ord(aStr[1]) - 0xa1
         else:
             return -1

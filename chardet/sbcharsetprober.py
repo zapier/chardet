@@ -29,6 +29,7 @@
 from __future__ import absolute_import
 import sys
 
+from .compat import wrap_ord
 from .constants import eError, eDetecting, _debug, eFoundIt, eNotMe
 from .charsetprober import CharSetProber
 
@@ -71,7 +72,7 @@ class SingleByteCharSetProber(CharSetProber):
             return self.get_state()
         for c in aBuf:
             try:
-                order = self._mModel['charToOrderMap'][ord(c)]
+                order = self._mModel['charToOrderMap'][wrap_ord(c)]
             except IndexError:
                 return eError
             if order < SYMBOL_CAT_ORDER:

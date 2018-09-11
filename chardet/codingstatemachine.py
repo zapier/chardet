@@ -26,7 +26,10 @@
 ######################### END LICENSE BLOCK #########################
 
 from __future__ import absolute_import
+
 from .constants import eStart, eError, eItsMe
+from .compat import wrap_ord
+
 
 class CodingStateMachine:
     def __init__(self, sm):
@@ -42,7 +45,7 @@ class CodingStateMachine:
         # for each byte we get its class
         # if it is first byte, we also get byte length
         try:
-            byteCls = self._mModel['classTable'][ord(c)]
+            byteCls = self._mModel['classTable'][wrap_ord(c)]
         except IndexError:
             return eError
         if self._mCurrentState == eStart:
