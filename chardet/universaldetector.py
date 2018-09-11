@@ -46,8 +46,8 @@ eHighbyte = 2
 
 class UniversalDetector:
     def __init__(self):
-        self._highBitDetector = re.compile(r'[\x80-\xFF]')
-        self._escDetector = re.compile(r'(\033|~{)')
+        self._highBitDetector = re.compile(br'[\x80-\xFF]')
+        self._escDetector = re.compile(br'(\033|~{)')
         self._mEscCharSetProber = None
         self._mCharSetProbers = []
         self.reset()
