@@ -28,7 +28,6 @@
 ######################### END LICENSE BLOCK #########################
 
 from __future__ import absolute_import
-from . import constants
 
 # 255: Control characters that usually does not exist in any text
 # 254: Carriage/Return

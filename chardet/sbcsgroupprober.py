@@ -27,7 +27,8 @@
 ######################### END LICENSE BLOCK #########################
 
 from __future__ import absolute_import
-import constants, sys
+import sys
+
 from .charsetgroupprober import CharSetGroupProber
 from .sbcharsetprober import SingleByteCharSetProber
 from .langcyrillicmodel import Win1251CyrillicModel, Koi8rModel, Latin5CyrillicModel, MacCyrillicModel, Ibm866Model, Ibm855Model

@@ -26,8 +26,9 @@
 ######################### END LICENSE BLOCK #########################
 
 from __future__ import absolute_import
-import constants, sys
-from .constants import eStart, eError, eItsMe
+import sys
+
+from .constants import eStart, eError, eItsMe, eNotMe, eFoundIt, eDetecting, SHORTCUT_THRESHOLD
 from .charsetprober import CharSetProber
 from .codingstatemachine import CodingStateMachine
 from .mbcssm import UTF8SMModel
@@ -53,18 +54,18 @@ class UTF8Prober(CharSetProber):
         for c in aBuf:
             codingState = self._mCodingSM.next_state(c)
             if codingState == eError:
-                self._mState = constants.eNotMe
+                self._mState = eNotMe
                 break
             elif codingState == eItsMe:
-                self._mState = constants.eFoundIt
+                self._mState = eFoundIt
                 break
             elif codingState == eStart:
                 if self._mCodingSM.get_current_charlen() >= 2:
                     self._mNumOfMBChar += 1
 
-        if self.get_state() == constants.eDetecting:
-            if self.get_confidence() > constants.SHORTCUT_THRESHOLD:
-                self._mState = constants.eFoundIt
+        if self.get_state() == eDetecting:
+            if self.get_confidence() > SHORTCUT_THRESHOLD:
+                self._mState = eFoundIt
 
         return self.get_state()
 

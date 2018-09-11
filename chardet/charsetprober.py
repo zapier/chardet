@@ -27,14 +27,17 @@
 ######################### END LICENSE BLOCK #########################
 
 from __future__ import absolute_import
-import constants, re
+import re
+
+from .constants import eDetecting
+
 
 class CharSetProber:
     def __init__(self):
         pass
         
     def reset(self):
-        self._mState = constants.eDetecting
+        self._mState = eDetecting
     
     def get_charset_name(self):
         return None

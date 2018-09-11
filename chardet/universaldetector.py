@@ -27,13 +27,15 @@
 ######################### END LICENSE BLOCK #########################
 
 from __future__ import absolute_import
-import constants, sys
+import sys
+import re
+import logging
+
+from .constants import eFoundIt, _debug
 from .latin1prober import Latin1Prober # windows-1252
 from .mbcsgroupprober import MBCSGroupProber # multi-byte character sets
 from .sbcsgroupprober import SBCSGroupProber # single-byte character sets
 from .escprober import EscCharSetProber # ISO-2122, etc.
-import re
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -108,7 +110,7 @@ class UniversalDetector:
         if self._mInputState == eEscAscii:
             if not self._mEscCharSetProber:
                 self._mEscCharSetProber = EscCharSetProber()
-            if self._mEscCharSetProber.feed(aBuf) == constants.eFoundIt:
+            if self._mEscCharSetProber.feed(aBuf) == eFoundIt:
                 self.result = {'encoding': self._mEscCharSetProber.get_charset_name(),
                                'confidence': self._mEscCharSetProber.get_confidence()}
                 self.done = True
@@ -117,7 +119,7 @@ class UniversalDetector:
                 self._mCharSetProbers = [MBCSGroupProber(), SBCSGroupProber(), Latin1Prober()]
             for prober in self._mCharSetProbers:
                 try:
-                    if prober.feed(aBuf) == constants.eFoundIt:
+                    if prober.feed(aBuf) == eFoundIt:
                         self.result = {'encoding': prober.get_charset_name(),
                                        'confidence': prober.get_confidence()}
                         self.done = True
@@ -128,7 +130,7 @@ class UniversalDetector:
     def close(self):
         if self.done: return
         if not self._mGotData:
-            if constants._debug:
+            if _debug:
                 sys.stderr.write('no data received!\n')
             return
         self.done = True
@@ -152,7 +154,7 @@ class UniversalDetector:
                                'confidence': maxProber.get_confidence()}
                 return self.result
 
-        if constants._debug:
+        if _debug:
             sys.stderr.write('no probers hit minimum threshhold\n')
             for prober in self._mCharSetProbers[0].mProbers:
                 if not prober: continue

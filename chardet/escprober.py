@@ -26,7 +26,8 @@
 ######################### END LICENSE BLOCK #########################
 
 from __future__ import absolute_import
-import constants, sys
+
+from .constants import eError, eNotMe, eFoundIt, eItsMe
 from .escsm import HZSMModel, ISO2022CNSMModel, ISO2022JPSMModel, ISO2022KRSMModel
 from .charsetprober import CharSetProber
 from .codingstatemachine import CodingStateMachine
@@ -66,14 +67,14 @@ class EscCharSetProber(CharSetProber):
                 if not codingSM: continue
                 if not codingSM.active: continue
                 codingState = codingSM.next_state(c)
-                if codingState == constants.eError:
+                if codingState == eError:
                     codingSM.active = False
                     self._mActiveSM -= 1
                     if self._mActiveSM <= 0:
-                        self._mState = constants.eNotMe
+                        self._mState = eNotMe
                         return self.get_state()
-                elif codingState == constants.eItsMe:
-                    self._mState = constants.eFoundIt
+                elif codingState == eItsMe:
+                    self._mState = eFoundIt
                     self._mDetectedCharset = codingSM.get_coding_state_machine()
                     return self.get_state()
                 

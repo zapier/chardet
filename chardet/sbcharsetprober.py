@@ -27,7 +27,9 @@
 ######################### END LICENSE BLOCK #########################
 
 from __future__ import absolute_import
-import constants, sys
+import sys
+
+from .constants import eError, eDetecting, _debug, eFoundIt, eNotMe
 from .charsetprober import CharSetProber
 
 SAMPLE_SIZE = 64
@@ -71,7 +73,7 @@ class SingleByteCharSetProber(CharSetProber):
             try:
                 order = self._mModel['charToOrderMap'][ord(c)]
             except IndexError:
-                return constants.eError
+                return eError
             if order < SYMBOL_CAT_ORDER:
                 self._mTotalChar += 1
             if order < SAMPLE_SIZE:
@@ -84,17 +86,17 @@ class SingleByteCharSetProber(CharSetProber):
                         self._mSeqCounters[self._mModel['precedenceMatrix'][(order * SAMPLE_SIZE) + self._mLastOrder]] += 1
             self._mLastOrder = order
 
-        if self.get_state() == constants.eDetecting:
+        if self.get_state() == eDetecting:
             if self._mTotalSeqs > SB_ENOUGH_REL_THRESHOLD:
                 cf = self.get_confidence()
                 if cf > POSITIVE_SHORTCUT_THRESHOLD:
-                    if constants._debug:
+                    if _debug:
                         sys.stderr.write('%s confidence = %s, we have a winner\n' % (self._mModel['charsetName'], cf))
-                    self._mState = constants.eFoundIt
+                    self._mState = eFoundIt
                 elif cf < NEGATIVE_SHORTCUT_THRESHOLD:
-                    if constants._debug:
+                    if _debug:
                         sys.stderr.write('%s confidence = %s, below negative shortcut threshhold %s\n' % (self._mModel['charsetName'], cf, NEGATIVE_SHORTCUT_THRESHOLD))
-                    self._mState = constants.eNotMe
+                    self._mState = eNotMe
 
         return self.get_state()
 
