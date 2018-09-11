@@ -39,6 +39,7 @@ ENOUGH_DATA_THRESHOLD = 1024
 SURE_YES = 0.99
 SURE_NO = 0.01
 
+
 class CharDistributionAnalysis:
     def __init__(self):
         self._mCharToFreqOrder = None # Mapping table to get frequency order from char order (get from GetOrder())
@@ -99,14 +100,15 @@ class EUCTWDistributionAnalysis(CharDistributionAnalysis):
         self._mTypicalDistributionRatio = EUCTW_TYPICAL_DISTRIBUTION_RATIO
 
     def get_order(self, aStr):
-        # for euc-TW encoding, we are interested 
+        # for euc-TW encoding, we are interested
         #   first  byte range: 0xc4 -- 0xfe
         #   second byte range: 0xa1 -- 0xfe
         # no validation needed here. State machine has done that
-        if aStr[0] >= '\xC4':
+        if wrap_ord(aStr[0]) >= 0xC4:
             return 94 * (wrap_ord(aStr[0]) - 0xC4) + wrap_ord(aStr[1]) - 0xA1
         else:
             return -1
+
 
 class EUCKRDistributionAnalysis(CharDistributionAnalysis):
     def __init__(self):
@@ -116,14 +118,15 @@ class EUCKRDistributionAnalysis(CharDistributionAnalysis):
         self._mTypicalDistributionRatio = EUCKR_TYPICAL_DISTRIBUTION_RATIO
 
     def get_order(self, aStr):
-        # for euc-KR encoding, we are interested 
+        # for euc-KR encoding, we are interested
         #   first  byte range: 0xb0 -- 0xfe
         #   second byte range: 0xa1 -- 0xfe
         # no validation needed here. State machine has done that
-        if aStr[0] >= '\xB0':
+        if wrap_ord(aStr[0]) >= 0xB0:
             return 94 * (wrap_ord(aStr[0]) - 0xB0) + wrap_ord(aStr[1]) - 0xA1
         else:
-            return -1;
+            return -1
+
 
 class GB2312DistributionAnalysis(CharDistributionAnalysis):
     def __init__(self):
@@ -133,14 +136,15 @@ class GB2312DistributionAnalysis(CharDistributionAnalysis):
         self._mTypicalDistributionRatio = GB2312_TYPICAL_DISTRIBUTION_RATIO
 
     def get_order(self, aStr):
-        # for GB2312 encoding, we are interested 
+        # for GB2312 encoding, we are interested
         #  first  byte range: 0xb0 -- 0xfe
         #  second byte range: 0xa1 -- 0xfe
         # no validation needed here. State machine has done that
-        if (aStr[0] >= '\xB0') and (aStr[1] >= '\xA1'):
+        if wrap_ord(aStr[0]) >= 0xB0 and wrap_ord(aStr[1]) >= 0xA1:
             return 94 * (wrap_ord(aStr[0]) - 0xB0) + wrap_ord(aStr[1]) - 0xA1
         else:
-            return -1;
+            return -1
+
 
 class Big5DistributionAnalysis(CharDistributionAnalysis):
     def __init__(self):
@@ -150,17 +154,20 @@ class Big5DistributionAnalysis(CharDistributionAnalysis):
         self._mTypicalDistributionRatio = BIG5_TYPICAL_DISTRIBUTION_RATIO
 
     def get_order(self, aStr):
-        # for big5 encoding, we are interested 
+        # for big5 encoding, we are interested
         #   first  byte range: 0xa4 -- 0xfe
         #   second byte range: 0x40 -- 0x7e , 0xa1 -- 0xfe
         # no validation needed here. State machine has done that
-        if aStr[0] >= '\xA4':
-            if aStr[1] >= '\xA1':
-                return 157 * (wrap_ord(aStr[0]) - 0xA4) + wrap_ord(aStr[1]) - 0xA1 + 63
+        if wrap_ord(aStr[0]) >= 0xA4:
+            if wrap_ord(aStr[1]) >= 0xA1:
+                return (157 * (wrap_ord(aStr[0]) - 0xA4) + wrap_ord(aStr[1])
+                        - 0xA1 + 63)
             else:
-                return 157 * (wrap_ord(aStr[0]) - 0xA4) + wrap_ord(aStr[1]) - 0x40
+                return (157 * (wrap_ord(aStr[0]) - 0xA4) + wrap_ord(aStr[1])
+                        - 0x40)
         else:
             return -1
+
 
 class SJISDistributionAnalysis(CharDistributionAnalysis):
     def __init__(self):
@@ -170,19 +177,19 @@ class SJISDistributionAnalysis(CharDistributionAnalysis):
         self._mTypicalDistributionRatio = JIS_TYPICAL_DISTRIBUTION_RATIO
 
     def get_order(self, aStr):
-        # for sjis encoding, we are interested 
+        # for sjis encoding, we are interested
         #   first  byte range: 0x81 -- 0x9f , 0xe0 -- 0xfe
         #   second byte range: 0x40 -- 0x7e,  0x81 -- oxfe
         # no validation needed here. State machine has done that
-        if (aStr[0] >= '\x81') and (aStr[0] <= '\x9F'):
+        if wrap_ord(aStr[0]) >= 0x81 and wrap_ord(aStr[0]) <= 0x9F:
             order = 188 * (wrap_ord(aStr[0]) - 0x81)
-        elif (aStr[0] >= '\xE0') and (aStr[0] <= '\xEF'):
+        elif wrap_ord(aStr[0]) >= 0xE0 and wrap_ord(aStr[0]) <= 0xEF:
             order = 188 * (wrap_ord(aStr[0]) - 0xE0 + 31)
         else:
-            return -1;
+            return -1
         order = order + wrap_ord(aStr[1]) - 0x40
-        if aStr[1] > '\x7F':
-            order =- 1
+        if wrap_ord(aStr[1]) > 0x7F:
+            order = -1
         return order
 
 class EUCJPDistributionAnalysis(CharDistributionAnalysis):
@@ -193,11 +200,11 @@ class EUCJPDistributionAnalysis(CharDistributionAnalysis):
         self._mTypicalDistributionRatio = JIS_TYPICAL_DISTRIBUTION_RATIO
 
     def get_order(self, aStr):
-        # for euc-JP encoding, we are interested 
+        # for euc-JP encoding, we are interested
         #   first  byte range: 0xa0 -- 0xfe
         #   second byte range: 0xa1 -- 0xfe
         # no validation needed here. State machine has done that
-        if aStr[0] >= '\xA0':
+        if wrap_ord(aStr[0]) >= 0xA0:
             return 94 * (wrap_ord(aStr[0]) - 0xA1) + wrap_ord(aStr[1]) - 0xa1
         else:
             return -1
