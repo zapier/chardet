@@ -58,7 +58,7 @@ class UniversalDetector:
         self._mStart = True
         self._mGotData = False
         self._mInputState = ePureAscii
-        self._mLastChar = ''
+        self._mLastChar = b''
         if self._mEscCharSetProber:
             self._mEscCharSetProber.reset()
         for prober in self._mCharSetProbers:
@@ -105,7 +105,7 @@ class UniversalDetector:
             elif (self._mInputState == ePureAscii) and self._escDetector.search(self._mLastChar + aBuf):
                 self._mInputState = eEscAscii
 
-        self._mLastChar = aBuf[-1]
+        self._mLastChar = aBuf[-1:]
 
         if self._mInputState == eEscAscii:
             if not self._mEscCharSetProber:
