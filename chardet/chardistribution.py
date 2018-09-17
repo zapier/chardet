@@ -25,7 +25,7 @@
 # 02110-1301  USA
 ######################### END LICENSE BLOCK #########################
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 
 from .compat import wrap_ord
 from . import constants
