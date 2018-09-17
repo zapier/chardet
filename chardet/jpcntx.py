@@ -189,7 +189,7 @@ class SJISContextAnalysis(JapaneseContextAnalysis):
         # return its order if it is hiragana
         if len(aStr) > 1:
             char_1 = wrap_ord(aStr[1])
-            if ((char == 202) and (0x9F <= char_1 <= 0xF1)):
+            if ((char == 0x82) and (0x9F <= char_1 <= 0xF1)):
                 return char_1 - 0x9F, charLen
 
 
