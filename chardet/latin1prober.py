@@ -26,9 +26,14 @@
 # 02110-1301  USA
 ######################### END LICENSE BLOCK #########################
 
-from charsetprober import CharSetProber
-import constants
+from __future__ import absolute_import, division
+
 import operator
+from functools import reduce
+
+from .compat import wrap_ord
+from .charsetprober import CharSetProber
+from . import constants
 
 FREQ_CAT_NUM = 4
 
@@ -110,7 +115,7 @@ class Latin1Prober(CharSetProber):
         aBuf = self.filter_with_english_letters(aBuf)
         for c in aBuf:
             try:
-                charClass = Latin1_CharToClass[ord(c)]
+                charClass = Latin1_CharToClass[wrap_ord(c)]
             except IndexError:
                 return constants.eError
             freq = Latin1ClassModel[(self._mLastCharClass * CLASS_NUM) + charClass]

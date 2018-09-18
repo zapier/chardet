@@ -25,13 +25,16 @@
 # 02110-1301  USA
 ######################### END LICENSE BLOCK #########################
 
-import constants, sys
-from constants import eStart, eError, eItsMe
-from mbcharsetprober import MultiByteCharSetProber
-from codingstatemachine import CodingStateMachine
-from chardistribution import EUCJPDistributionAnalysis
-from jpcntx import EUCJPContextAnalysis
-from mbcssm import EUCJPSMModel
+from __future__ import absolute_import
+import sys
+
+from .constants import eStart, eError, eItsMe, _debug, eNotMe, eFoundIt, eDetecting, SHORTCUT_THRESHOLD
+from .mbcharsetprober import MultiByteCharSetProber
+from .codingstatemachine import CodingStateMachine
+from .chardistribution import EUCJPDistributionAnalysis
+from .jpcntx import EUCJPContextAnalysis
+from .mbcssm import EUCJPSMModel
+from six.moves import range
 
 class EUCJPProber(MultiByteCharSetProber):
     def __init__(self):
@@ -53,12 +56,12 @@ class EUCJPProber(MultiByteCharSetProber):
         for i in range(0, aLen):
             codingState = self._mCodingSM.next_state(aBuf[i])
             if codingState == eError:
-                if constants._debug:
+                if _debug:
                     sys.stderr.write(self.get_charset_name() + ' prober hit error at byte ' + str(i) + '\n')
-                self._mState = constants.eNotMe
+                self._mState = eNotMe
                 break
             elif codingState == eItsMe:
-                self._mState = constants.eFoundIt
+                self._mState = eFoundIt
                 break
             elif codingState == eStart:
                 charLen = self._mCodingSM.get_current_charlen()
@@ -72,10 +75,10 @@ class EUCJPProber(MultiByteCharSetProber):
                     
         self._mLastChar[0] = aBuf[aLen - 1]
         
-        if self.get_state() == constants.eDetecting:
+        if self.get_state() == eDetecting:
             if self._mContextAnalyzer.got_enough_data() and \
-                   (self.get_confidence() > constants.SHORTCUT_THRESHOLD):
-                self._mState = constants.eFoundIt
+                   (self.get_confidence() > SHORTCUT_THRESHOLD):
+                self._mState = eFoundIt
 
         return self.get_state()
 

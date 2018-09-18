@@ -25,10 +25,12 @@
 # 02110-1301  USA
 ######################### END LICENSE BLOCK #########################
 
-import constants, sys
-from escsm import HZSMModel, ISO2022CNSMModel, ISO2022JPSMModel, ISO2022KRSMModel
-from charsetprober import CharSetProber
-from codingstatemachine import CodingStateMachine
+from __future__ import absolute_import
+
+from .constants import eError, eNotMe, eFoundIt, eItsMe
+from .escsm import HZSMModel, ISO2022CNSMModel, ISO2022JPSMModel, ISO2022KRSMModel
+from .charsetprober import CharSetProber
+from .codingstatemachine import CodingStateMachine
 
 class EscCharSetProber(CharSetProber):
     def __init__(self):
@@ -45,7 +47,7 @@ class EscCharSetProber(CharSetProber):
         CharSetProber.reset(self)
         for codingSM in self._mCodingSM:
             if not codingSM: continue
-            codingSM.active = constants.True
+            codingSM.active = True
             codingSM.reset()
         self._mActiveSM = len(self._mCodingSM)
         self._mDetectedCharset = None
@@ -65,14 +67,14 @@ class EscCharSetProber(CharSetProber):
                 if not codingSM: continue
                 if not codingSM.active: continue
                 codingState = codingSM.next_state(c)
-                if codingState == constants.eError:
-                    codingSM.active = constants.False
+                if codingState == eError:
+                    codingSM.active = False
                     self._mActiveSM -= 1
                     if self._mActiveSM <= 0:
-                        self._mState = constants.eNotMe
+                        self._mState = eNotMe
                         return self.get_state()
-                elif codingState == constants.eItsMe:
-                    self._mState = constants.eFoundIt
+                elif codingState == eItsMe:
+                    self._mState = eFoundIt
                     self._mDetectedCharset = codingSM.get_coding_state_machine()
                     return self.get_state()
                 

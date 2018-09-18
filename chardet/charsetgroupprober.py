@@ -25,8 +25,11 @@
 # 02110-1301  USA
 ######################### END LICENSE BLOCK #########################
 
-import constants, sys
-from charsetprober import CharSetProber
+from __future__ import absolute_import
+import sys
+
+from .constants import eFoundIt, eNotMe, _debug
+from .charsetprober import CharSetProber
 
 class CharSetGroupProber(CharSetProber):
     def __init__(self):
@@ -41,7 +44,7 @@ class CharSetGroupProber(CharSetProber):
         for prober in self._mProbers:
             if prober:
                 prober.reset()
-                prober.active = constants.True
+                prober.active = True
                 self._mActiveNum += 1
         self._mBestGuessProber = None
 
@@ -58,33 +61,33 @@ class CharSetGroupProber(CharSetProber):
             if not prober.active: continue
             st = prober.feed(aBuf)
             if not st: continue
-            if st == constants.eFoundIt:
+            if st == eFoundIt:
                 self._mBestGuessProber = prober
                 return self.get_state()
-            elif st == constants.eNotMe:
-                prober.active = constants.False
+            elif st == eNotMe:
+                prober.active = False
                 self._mActiveNum -= 1
                 if self._mActiveNum <= 0:
-                    self._mState = constants.eNotMe
+                    self._mState = eNotMe
                     return self.get_state()
         return self.get_state()
 
     def get_confidence(self):
         st = self.get_state()
-        if st == constants.eFoundIt:
+        if st == eFoundIt:
             return 0.99
-        elif st == constants.eNotMe:
+        elif st == eNotMe:
             return 0.01
         bestConf = 0.0
         self._mBestGuessProber = None
         for prober in self._mProbers:
             if not prober: continue
             if not prober.active:
-                if constants._debug:
+                if _debug:
                     sys.stderr.write(prober.get_charset_name() + ' not active\n')
                 continue
             cf = prober.get_confidence()
-            if constants._debug:
+            if _debug:
                 sys.stderr.write('%s confidence = %s\n' % (prober.get_charset_name(), cf))
             if bestConf < cf:
                 bestConf = cf
