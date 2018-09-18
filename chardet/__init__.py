@@ -16,7 +16,7 @@
 ######################### END LICENSE BLOCK #########################
 
 from __future__ import absolute_import
-__version__ = "1.1"
+__version__ = "1.1.post1"
 
 def detect(aBuf):
     from . import universaldetector
