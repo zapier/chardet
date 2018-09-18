@@ -10,7 +10,8 @@ if not hasattr(DistributionMetadata, 'download_url'):
 
 setup(
     name = 'chardet',
-    version = '1.1',
+    # Zapier specific version
+    version = '1.1.post1',
     description = 'Universal encoding detector',
     long_description = """\
 Universal character encoding detector
